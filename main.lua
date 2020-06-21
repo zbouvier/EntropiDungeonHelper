@@ -68,11 +68,13 @@ function printInterrupts()
           
           
         end
-        currentGroupInterrupts[priority] = {individualName = name, cooldown = interruptLookupTable[tableKey].cooldown}
-          --SendChatMessage(name..": "..interruptLookupTable[tableKey].cooldown.." seconds","PARTY" ,"COMMON" ,1);
-        priority = priority + 1;
-        --table.sort(currentGroupInterrupts, compare)
-
+        if(not (interruptLookupTable[tableKey].cooldown == -1)) then --Ignores Healers
+          currentGroupInterrupts[priority] = {individualName = name, cooldown = interruptLookupTable[tableKey].cooldown}
+            --SendChatMessage(name..": "..interruptLookupTable[tableKey].cooldown.." seconds","PARTY" ,"COMMON" ,1);
+          priority = priority + 1;
+          --table.sort(currentGroupInterrupts, compare)
+          EDHInterfaceFrame:Show();
+        end
 
       end
     end
@@ -80,18 +82,23 @@ function printInterrupts()
     SendChatMessage("EDH:Suggested Interrupt Order","PARTY" ,"COMMON" ,1);
     for k, v in pairs(currentGroupInterrupts) do
       --ChatFrame1:AddMessage(k .. " " .. v.cooldown, 125, 0, 125, 3)
-      if(k == 1) then
-        timing = "First or {Diamond}"
-      elseif(k==2) then
-        timing = "Second or {Moon}"
-      elseif(k==3) then
-        timing = "Third or {Square}"
-      elseif(k==4) then
-        timing = "Fourth or {Circle}"
-      else
-        timing = "Fifth or {Star}"
-      end
       if(v) then
+        if(k == 1) then
+          timing = "First or {Diamond}"
+          firstPerson:SetText(v.individualName)
+        elseif(k==2) then
+          timing = "Second or {Moon}"
+          secondPerson:SetText(v.individualName)
+        elseif(k==3) then
+          timing = "Third or {Square}"
+          thirdPerson:SetText(v.individualName)
+        elseif(k==4) then
+          timing = "Fourth or {Circle}"
+          fourthPerson:SetText(v.individualName)
+        else
+          timing = "Fifth or {Star}"
+          fifthPerson:SetText(v.individualName)
+        end
         SendChatMessage(timing ..": "..v.individualName,"PARTY" ,"COMMON" ,1, 3);
       end
     end
@@ -112,7 +119,15 @@ playerEnterWorld:SetScript("OnEvent", dungeonHandler);
 SLASH_EDH1 = "/edh"
 SLASH_EDH2 = "/dh"
 SlashCmdList["EDH"] = function(msg)
-   printInterrupts()
+   if msg == "off"  or msg == "hide" then
+    EDHInterfaceFrame:Hide();
+   end
+   if msg == "on" then
+    EDHInterfaceFrame:Show();
+   end
+   if msg == "" then
+    printInterrupts()
+   end
 end 
 -- local inspectReady = CreateFrame("FRAME");
 -- inspectReady:RegisterEvent("INSPECT_READY");
