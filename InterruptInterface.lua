@@ -80,7 +80,7 @@
 
     firstPerson=EDHInterfaceFrame:CreateFontString(firstPerson,"OVERLAY","GameFontNormal");
     firstPerson:SetPoint("TOP", 0, -30);
-
+        
     secondPerson=EDHInterfaceFrame:CreateFontString(secondPerson,"OVERLAY","GameFontNormal");
     secondPerson:SetPoint("TOP", 0, -60);
 
