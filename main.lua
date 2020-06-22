@@ -32,7 +32,21 @@ for i, thing in pairs(tableOfInterrupts) do
   interruptLookupTable[thing.id] = thing
 end
 
-
+function getColored(unit)
+  if not unit then return end
+  local function DecimalToHex(r,g,b)
+      return string.format("|cff%02x%02x%02x", r*255, g*255, b*255)
+  end
+  local playername = UnitName(unit)
+  local playerclass,PLAYERCLASS = UnitClass(unit)
+  if not PLAYERCLASS then return unit end
+  local classcolor = RAID_CLASS_COLORS[PLAYERCLASS]
+  if not classcolor then return unit end
+  local r,g,b = classcolor.r,classcolor.g,classcolor.b
+  if UnitIsDeadOrGhost(unit) then r,g,b = 0.5,0.5,0.5 end        
+  local classcolorhex = DecimalToHex(r,g,b)
+  return classcolorhex..playername.."|r"
+end
 
 groupindex = 0;
 currentGroupInterrupts = {};
@@ -69,7 +83,7 @@ function printInterrupts()
           
         end
         if(not (interruptLookupTable[tableKey].cooldown == -1)) then --Ignores Healers
-          currentGroupInterrupts[priority] = {individualName = name, cooldown = interruptLookupTable[tableKey].cooldown}
+          currentGroupInterrupts[priority] = {individualName = name, cooldown = interruptLookupTable[tableKey].cooldown, className = class:upper()}
             --SendChatMessage(name..": "..interruptLookupTable[tableKey].cooldown.." seconds","PARTY" ,"COMMON" ,1);
           priority = priority + 1;
           --table.sort(currentGroupInterrupts, compare)
@@ -82,22 +96,30 @@ function printInterrupts()
     SendChatMessage("EDH:Suggested Interrupt Order","PARTY" ,"COMMON" ,1);
     for k, v in pairs(currentGroupInterrupts) do
       --ChatFrame1:AddMessage(k .. " " .. v.cooldown, 125, 0, 125, 3)
+      
       if(v) then
+        local classColorRGB = RAID_CLASS_COLORS[v.className]
+
         if(k == 1) then
           timing = "First or {Diamond}"
           firstPerson:SetText(v.individualName)
+          firstPerson:SetTextColor(classColorRGB.r, classColorRGB.g,classColorRGB.b)
         elseif(k==2) then
           timing = "Second or {Moon}"
           secondPerson:SetText(v.individualName)
+          secondPerson:SetTextColor(classColorRGB.r, classColorRGB.g,classColorRGB.b)
         elseif(k==3) then
           timing = "Third or {Square}"
           thirdPerson:SetText(v.individualName)
+          thirdPerson:SetTextColor(classColorRGB.r, classColorRGB.g,classColorRGB.b)
         elseif(k==4) then
           timing = "Fourth or {Circle}"
           fourthPerson:SetText(v.individualName)
+          fourthPerson:SetTextColor(classColorRGB.r, classColorRGB.g,classColorRGB.b)
         else
           timing = "Fifth or {Star}"
           fifthPerson:SetText(v.individualName)
+          fifthPerson:SetTextColor(classColorRGB.r, classColorRGB.g,classColorRGB.b)
         end
         SendChatMessage(timing ..": "..v.individualName,"PARTY" ,"COMMON" ,1, 3);
       end
@@ -129,6 +151,7 @@ SlashCmdList["EDH"] = function(msg)
     printInterrupts()
    end
 end 
+
 -- local inspectReady = CreateFrame("FRAME");
 -- inspectReady:RegisterEvent("INSPECT_READY");
 -- inspectReady:SetScript("OnEvent", inspectHandler);
