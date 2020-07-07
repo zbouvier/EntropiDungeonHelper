@@ -1,0 +1,107 @@
+tag 4b7c4dbb0f252cbd9b7b4ef331314a4df5c9479e 0.7
+Author:	Rainrider <rainrider.wow@gmail.com>
+Date:	Wed Jun 14 10:17:16 2017 +0200
+
+Support for patch 7.2.5
+
+commit 6d9fbbdb6d439779987ba3185e1e4f6de045e701
+Author: Rainrider <rainrider.wow@gmail.com>
+Date:   Sun Jun 4 19:16:31 2017 +0200
+
+    demonhunter: update for 7.2.5
+
+commit 879d687e68e873af47a2e562b981f7b167bf59e6
+Author: Rainrider <rainrider.wow@gmail.com>
+Date:   Sun Jun 4 18:57:47 2017 +0200
+
+    deathknight: update for 7.2.5
+
+commit 7a73ba7e3b6de82572bd8672dc6f15cc48ddc5aa
+Author: Rainrider <rainrider.wow@gmail.com>
+Date:   Sun Jun 4 18:48:54 2017 +0200
+
+    warrior: update for 7.2.5
+
+commit 0f1d155ba395f5c11861a7f3960850a797f6ffb1
+Author: Rainrider <rainrider.wow@gmail.com>
+Date:   Sun Jun 4 18:33:46 2017 +0200
+
+    warlock: update for 7.2.5
+
+commit 0671eeab732abec4034466f2fea012bd577ac4e6
+Author: Rainrider <rainrider.wow@gmail.com>
+Date:   Sun Jun 4 16:40:38 2017 +0200
+
+    hunter: fix Scorpid Sting
+
+commit 6da41435654ed761331904a7e1b58c580527c37b
+Author: Rainrider <rainrider.wow@gmail.com>
+Date:   Sun Jun 4 16:34:32 2017 +0200
+
+    shaman: update for 7.2.5
+
+commit 77a3cb8ef8927399f02ab26bb9afdc073db1dc9d
+Author: Rainrider <rainrider.wow@gmail.com>
+Date:   Sun Jun 4 16:19:00 2017 +0200
+
+    rogue: update for 7.2.5
+
+commit 1be50d0260c3d5b7c3b41c39f762ff95aab53f6b
+Author: Rainrider <rainrider.wow@gmail.com>
+Date:   Sun Jun 4 15:07:59 2017 +0200
+
+    priest: update for 7.2.5
+
+commit 0856bfc8ebe871691f96b3eac42eab631b457b30
+Author: Rainrider <rainrider.wow@gmail.com>
+Date:   Sun Jun 4 14:40:58 2017 +0200
+
+    monk: update for 7.2.5
+
+commit 65bffcd6a1794f5a8a318e3f78d63568da8869fa
+Author: Rainrider <rainrider.wow@gmail.com>
+Date:   Sun Jun 4 14:07:42 2017 +0200
+
+    mage: rename Flurry (frozen) to Winter's Chill
+
+commit 4d3f61bbad03e6c6eae9c2a831b4bbf7dfec7071
+Author: Rainrider <rainrider.wow@gmail.com>
+Date:   Sun Jun 4 13:37:51 2017 +0200
+
+    druid: update for 7.2.5
+
+commit 6c58236182a4ef0f63f0518223512043cf65290c
+Author: Rainrider <rainrider.wow@gmail.com>
+Date:   Sun Jun 4 12:36:41 2017 +0200
+
+    Revert "CI: triggers a build of AdiButtonAuras on success."
+    
+    This reverts commit 4e228cce1d668e677aeb00ff7a0c5f5357523dc5.
+    It does not seem to work. Curse returns a 302
+
+commit 320ba83285ac3797e49fa74a13491aa2b974a6f0
+Author: Rainrider <rainrider.wow@gmail.com>
+Date:   Thu Apr 13 18:56:55 2017 +0200
+
+    hunter: fix Viper Sting
+
+commit 951175d1c2509ead02647488c4fef8ccc3baba4f
+Author: Adirelle <adirelle@gmail.com>
+Date:   Sun Apr 2 16:50:48 2017 +0200
+
+    CI: corrected the deploy script.
+
+commit 4e228cce1d668e677aeb00ff7a0c5f5357523dc5
+Author: Adirelle <adirelle@gmail.com>
+Date:   Sun Apr 2 16:45:38 2017 +0200
+
+    CI: triggers a build of AdiButtonAuras on success.
+
+commit cf73d9cf37a5ba79604e3da433635e6dc9a7a800
+Author: Rainrider <rainrider.wow@gmail.com>
+Date:   Sat Apr 1 01:10:50 2017 +0200
+
+    druid: Wax and Wane affect Sunfire too
+    
+    Hotfix from March 29
+

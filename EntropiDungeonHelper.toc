@@ -1,6 +1,11 @@
 ## Interface: 80300
 ## Title: Entropi Dungeon Helper
 ## Author: Brae
-## Version: 0.1
+## SavedVariables: EntropiChatSaveTo
+## Version: 0.7
+libs\LibStub\LibStub.lua
+libs\CallbackHandler-1.0\CallbackHandler-1.0.xml
+libs\LibPlayerSpells-1.0\lib.xml
 main.lua
 InterruptInterface.lua
+#InterfaceOptions.lua
