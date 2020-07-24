@@ -40,7 +40,7 @@ lib:__RegisterSpells("PRIEST", 70200, 2, {
 		 246287, -- Evangelism
 		[123040] = "POWER_REGEN", -- Mindbender (Discipline)
 		[200174] = "POWER_REGEN", -- Mindbender (Shadow)
-		[ 226452] = "INTERRUPT", -- Silence
+		[ 15487] = "INTERRUPT", -- Silence
 		DISPEL = {
 			[   527] = "HELPFUL DISEASE MAGIC", -- Purify
 			[ 32375] = "HARMFUL HELPFUL MAGIC", -- Mass Dispel

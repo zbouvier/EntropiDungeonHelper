@@ -7,5 +7,5 @@ libs\LibStub\LibStub.lua
 libs\CallbackHandler-1.0\CallbackHandler-1.0.xml
 libs\LibPlayerSpells-1.0\lib.xml
 main.lua
-InterruptInterface.lua
+#InterruptInterface.lua
 #InterfaceOptions.lua

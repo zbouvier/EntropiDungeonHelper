@@ -8,7 +8,93 @@
     fourthPerson:SetText("");
     fifthPerson:SetText("");
     currentGroupInterrupts = {};
+    --interruptLookupTable = {};
     priority = 1;
+    s1=nil;
+    s2=nil;
+    s3=nil;
+    s4=nil;
+    s5=nil;
+    EDHInterfaceFrame:Hide();
+    --f=nil;
+  end
+  function initializeInterface()
+    EDHInterfaceFrame = CreateFrame("Frame", "testframe", UIParent);
+    EDHInterfaceFrame:SetPoint("CENTER", UIParent, "CENTER")
+    EDHInterfaceFrame:SetSize(150,175)
+    EDHInterfaceFrame:SetBackdropColor(0, 0, 0, 0.75)
+    EDHInterfaceFrame:EnableMouse(true)
+    EDHInterfaceFrame:SetMovable(true)
+    EDHInterfaceFrame:SetResizable(true)
+    EDHInterfaceFrame:SetScript("OnDragStart", function(self) 
+        self.isMoving = true
+        self:StartMoving() 
+    end)
+    EDHInterfaceFrame:SetScript("OnDragStop", function(self) 
+        self.isMoving = false
+        self:StopMovingOrSizing() 
+        self.x = self:GetLeft() 
+        self.y = (self:GetTop() - self:GetHeight()) 
+        self:ClearAllPoints()
+        self:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", self.x, self.y)
+    end)
+    EDHInterfaceFrame:SetScript("OnUpdate", function(self) 
+        if self.isMoving == true then
+            self.x = self:GetLeft() 
+            self.y = (self:GetTop() - self:GetHeight()) 
+            self:ClearAllPoints()
+            self:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", self.x, self.y)
+        end
+    end)
+    EDHInterfaceFrame:SetClampedToScreen(true)
+    EDHInterfaceFrame:RegisterForDrag("LeftButton")
+    EDHInterfaceFrame:SetScale(1)
+    EDHInterfaceFrame.x = EDHInterfaceFrame:GetLeft() 
+    EDHInterfaceFrame.y = (EDHInterfaceFrame:GetTop() - EDHInterfaceFrame:GetHeight()) 
+    EDHInterfaceFrame:Show()
+    local PADDING_FOR_BAR = -4;
+    s1 = CreateFrame("StatusBar", "MyButton", EDHInterfaceFrame)
+    s1:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8", "BACKGROUND")
+    s1:SetStatusBarColor(1,0,.5,0)
+    s1:SetSize(150 ,22) -- width, height
+    s1:SetPoint("TOPLEFT", 0, -25)
+    firstPerson=s1:CreateFontString(firstPerson,"OVERLAY","GameFontNormal");
+    firstPerson:SetPoint("TOP", 0, PADDING_FOR_BAR);
+
+    s2 = CreateFrame("StatusBar", "MyButton", EDHInterfaceFrame)
+    s2:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8", "BACKGROUND")
+    s2:SetStatusBarColor(1,0,.5,0)
+    s2:SetSize(150 ,22) -- width, height
+    s2:SetPoint("TOPLEFT", 0, -55)
+    secondPerson=s2:CreateFontString(secondPerson,"OVERLAY","GameFontNormal");
+    secondPerson:SetPoint("TOP", 0, PADDING_FOR_BAR);
+
+
+    s3 = CreateFrame("StatusBar", "MyButton", EDHInterfaceFrame)
+    s3:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
+    s3:SetStatusBarColor(1,0,.5,0)
+    s3:SetSize(150 ,22) -- width, height
+    s3:SetPoint("TOPLEFT", 0, -85)
+    thirdPerson=s3:CreateFontString(thirdPerson,"OVERLAY","GameFontNormal");
+    thirdPerson:SetPoint("TOP", 0, PADDING_FOR_BAR);
+
+    s4 = CreateFrame("StatusBar", "MyButton", EDHInterfaceFrame)
+    s4:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
+    s4:SetStatusBarColor(1,0,.5,0)
+    s4:SetSize(150 ,22) -- width, height
+    s4:SetPoint("TOPLEFT", 0, -115)
+    fourthPerson=s4:CreateFontString(fourthPerson,"OVERLAY","GameFontNormal");
+    fourthPerson:SetPoint("TOP", 0, PADDING_FOR_BAR);
+
+    s5 = CreateFrame("StatusBar", "MyButton", EDHInterfaceFrame)
+    s5:SetStatusBarTexture("Interface\\BUTTONS\\WHITE8X8")
+    s5:SetStatusBarColor(1,0,.5,0)
+    s5:SetSize(150 ,22) -- width, height
+    s5:SetPoint("TOPLEFT", 0, -145)
+    fifthPerson=s5:CreateFontString(fifthPerson,"OVERLAY","GameFontNormal");
+    fifthPerson:SetPoint("TOP", 0, PADDING_FOR_BAR);
+
+    EDHInterfaceFrame:Hide();
   end
 
   nextNumber = 0;
@@ -16,16 +102,24 @@
     if not (next(currentGroupInterrupts) == nil) then
       for i, thing in pairs(currentGroupInterrupts) do
         --print(thing.interruptID .. " " ..spellID)
-        if(thing.interruptID == spellID) then
+        if((thing.interruptID == spellID) or (currentGroupInterrupts[i].tableKey == "BalanceDruid")) then
           local spellName, rank, icon, castTime, minRange, maxRange = GetSpellInfo(spellID)
-          if(i==GetNumGroupMembers()) then
-            i=0; -- my take on your generic "circular queue"
-          end 
-          --SendChatMessage(thing.individualName .. " used " .. spellName .. "   NEXT: " .. currentGroupInterrupts[i+1].individualName ,EntropiChatSaveTo ,"COMMON" ,1);
-          cooldownMS, gcdMS = GetSpellBaseCooldown(spellID)
-          cooldownSeconds = cooldownMS/1000
-          startCounting(i, cooldownSeconds);
-          updateUI(i+1)
+            if(currentGroupInterrupts[i].tableKey == "BalanceDruid") then
+              -- I hate boomkins
+              cooldownMS = "60000";
+              gcdMS = "0";
+            else
+              cooldownMS, gcdMS = GetSpellBaseCooldown(spellID)
+              --print("Triggered!" .. cooldownMS .. " " .. gcdMS)
+              cooldownSeconds = cooldownMS/1000
+              startCounting(i, cooldownSeconds);
+              
+              if(i==GetNumGroupMembers()) then
+                i=0; -- my take on your generic "circular queue"
+              end 
+              updateUI(i+1)
+              SendChatMessage(thing.individualName .. " used " .. spellName .. "   NEXT: " .. currentGroupInterrupts[i+1].individualName ,EntropiChatSaveTo ,"COMMON" ,1);  
+            end
         end
       end
     end
@@ -36,24 +130,27 @@ function round(num, numDecimalPlaces)
   return math.floor(num * mult + 0.5) / mult
 end
 function startCounting(priorityTarget, seconds)
-  if     priorityTarget == 1 then numberToChange = firstPerson:GetText():gsub("( [0-9]*\.[0-9]*s)" , ""); firstPerson:SetText(numberToChange .. " "..seconds.."s"); s1:SetValue(seconds)
-  elseif priorityTarget == 2 then numberToChange = secondPerson:GetText():gsub(" ([0-9]*\.[0-9]*s)" , ""); secondPerson:SetText(numberToChange .." ".. seconds.."s"); s2.SetValue(seconds)
-  elseif priorityTarget == 3 then numberToChange = thirdPerson:GetText():gsub(" ([0-9]*\.[0-9]*s)" , ""); thirdPerson:SetText(numberToChange .." ".. seconds.."s"); s3.SetValue(seconds)
-  elseif priorityTarget == 4 then numberToChange = fourthPerson:GetText():gsub(" ([0-9]*\.[0-9]*s)" , ""); fourthPerson:SetText(numberToChange .." ".. seconds.."s") s4.SetValue(seconds)
-  elseif priorityTarget == 5 then numberToChange = fifthPerson:GetText():gsub(" ([0-9]*\.[0-9]*s)" , ""); fifthPerson:SetText(numberToChange .." ".. seconds.."s") s5.SetValue(seconds)
-  end
-  if(seconds >= 0.1) then
-  C_Timer.After(0.1, function()
-    startCounting(priorityTarget, round(seconds-0.1, 1))
-  end);
-  else
-    if     priorityTarget == 1 then numberToChange = firstPerson:GetText():gsub("( [0-9]*\.[0-9]*s)" , ""); firstPerson:SetText(numberToChange); s1:SetValue(currentGroupInterrupts[1].cooldown)
-    elseif priorityTarget == 2 then numberToChange = secondPerson:GetText():gsub(" ([0-9]*\.[0-9]*s)" , ""); secondPerson:SetText(numberToChange); s2:SetValue(currentGroupInterrupts[2].cooldown)
-    elseif priorityTarget == 3 then numberToChange = thirdPerson:GetText():gsub(" ([0-9]*\.[0-9]*s)" , ""); thirdPerson:SetText(numberToChange); s3:SetValue(currentGroupInterrupts[3].cooldown)
-    elseif priorityTarget == 4 then numberToChange = fourthPerson:GetText():gsub(" ([0-9]*\.[0-9]*s)" , ""); fourthPerson:SetText(numberToChange); s4:SetValue(currentGroupInterrupts[4].cooldown)
-    elseif priorityTarget == 5 then numberToChange = fifthPerson:GetText():gsub(" ([0-9]*\.[0-9]*s)" , ""); fifthPerson:SetText(numberToChange); s5:SetValue(currentGroupInterrupts[5].cooldown)
+  --print("counting for "..priorityTarget .. seconds)
+  if(not (s1 == nil)) then
+    if     priorityTarget == 1 then numberToChange = firstPerson:GetText():gsub("( [0-9]*\.[0-9]*s)" , ""); firstPerson:SetText(numberToChange .. " "..seconds.."s"); s1:SetValue(seconds)
+    elseif priorityTarget == 2 then numberToChange = secondPerson:GetText():gsub(" ([0-9]*\.[0-9]*s)" , ""); secondPerson:SetText(numberToChange .." ".. seconds.."s"); s2:SetValue(seconds)
+    elseif priorityTarget == 3 then numberToChange = thirdPerson:GetText():gsub(" ([0-9]*\.[0-9]*s)" , ""); thirdPerson:SetText(numberToChange .." ".. seconds.."s"); s3:SetValue(seconds)
+    elseif priorityTarget == 4 then numberToChange = fourthPerson:GetText():gsub(" ([0-9]*\.[0-9]*s)" , ""); fourthPerson:SetText(numberToChange .." ".. seconds.."s") s4:SetValue(seconds)
+    elseif priorityTarget == 5 then numberToChange = fifthPerson:GetText():gsub(" ([0-9]*\.[0-9]*s)" , ""); fifthPerson:SetText(numberToChange .." ".. seconds.."s") s5:SetValue(seconds)
     end
-  end 
+    if(seconds >= 0.1) then
+    C_Timer.After(0.1, function()
+      startCounting(priorityTarget, round(seconds-0.1, 1))
+    end);
+    else
+      if     priorityTarget == 1 then numberToChange = firstPerson:GetText():gsub("( [0-9]*\.[0-9]*s)" , ""); firstPerson:SetText(numberToChange); s1:SetValue(currentGroupInterrupts[1].cooldown)
+      elseif priorityTarget == 2 then numberToChange = secondPerson:GetText():gsub(" ([0-9]*\.[0-9]*s)" , ""); secondPerson:SetText(numberToChange); s2:SetValue(currentGroupInterrupts[2].cooldown)
+      elseif priorityTarget == 3 then numberToChange = thirdPerson:GetText():gsub(" ([0-9]*\.[0-9]*s)" , ""); thirdPerson:SetText(numberToChange); s3:SetValue(currentGroupInterrupts[3].cooldown)
+      elseif priorityTarget == 4 then numberToChange = fourthPerson:GetText():gsub(" ([0-9]*\.[0-9]*s)" , ""); fourthPerson:SetText(numberToChange); s4:SetValue(currentGroupInterrupts[4].cooldown)
+      elseif priorityTarget == 5 then numberToChange = fifthPerson:GetText():gsub(" ([0-9]*\.[0-9]*s)" , ""); fifthPerson:SetText(numberToChange); s5:SetValue(currentGroupInterrupts[5].cooldown)
+      end
+    end 
+  end
 end
 
 NextPersonChar = "--> ";
@@ -220,10 +317,14 @@ end
 
 function dungeonHandler(self, event, isInitialLogin, isReloadingUi, ...)
   inInstance, instanceType = IsInInstance()
-  printInterrupts()
+  if(s1 == nil) then
+    initializeInterface()
+  end
+  --printInterrupts()
   if(instanceType == "party") then
       name, instanceType, difficultyID, difficultyName, maxPlayers, dynamicDifficulty, isDynamic, instanceID, instanceGroupSize, LfgDungeonID = GetInstanceInfo()
       ChatFrame1:AddMessage("EDH -- You have entered: "..name, 125, 0, 125, 3)
+      
       printInterrupts()
       
   end
@@ -233,6 +334,8 @@ end
 
 function printInterrupts()
   if(UnitInParty("player")) then
+    local isTrue = UnitIsGroupLeader("player")
+    if(isTrue) then
     priority = 1;
     SendChatMessage("EDH:Available Interrupts",EntropiChatSaveTo ,"COMMON" ,1);
     for groupindex = 1,MAX_PARTY_MEMBERS+1 do
@@ -243,9 +346,12 @@ function printInterrupts()
         tableKey = combatRole..class
         --ChatFrame1:AddMessage(name .. " " .. interruptLookupTable[tableKey].cooldown, 125, 0, 125)
         if(class == "Druid") then
+          --id = GetInspectSpecialization("party"..groupIndex)
           powerType, powerTypeString = UnitPowerType("party"..groupindex);
           --ChatFrame1:AddMessage(powerType, 125, 0, 125)
-          if (powerType == 8 and combatRole == "DAMAGER") then -- Power Type 0 is Energy, 1 is mana or DC, Astral is 8
+          --print(powerType)
+          if (powerType == 8) then -- Power Type 0 is Energy, 1 is mana or DC, Astral is 8
+            --print("ree")
             tableKey = "BalanceDruid"
           end
         end
@@ -260,10 +366,10 @@ function printInterrupts()
               --start, duration, enabled = GetSpellCooldown(spellID, "BOOKTYPE_SPELL");
               interruptSpellId = spellId
               cooldownMS, gcdMS = GetSpellBaseCooldown(spellId)
-              --SendChatMessage(spellName .. ": "..cooldownMS/1000 .. "s",EntropiChatSaveTo ,"COMMON" ,1);
+              SendChatMessage(spellName .. ": "..cooldownMS/1000 .. "s",EntropiChatSaveTo ,"COMMON" ,1);
             end
           end
-          currentGroupInterrupts[priority] = {individualName = name, cooldown = cooldownMS/1000, className = class:upper(), interruptID = interruptSpellId}
+          currentGroupInterrupts[priority] = {individualName = name, cooldown = cooldownMS/1000, className = class:upper(), interruptID = interruptSpellId, tableKey = tableKey}
             --SendChatMessage(name..": "..interruptLookupTable[tableKey].cooldown.." seconds","PARTY" ,"COMMON" ,1);
           priority = priority + 1;
           --table.sort(currentGroupInterrupts, compare)
@@ -272,6 +378,7 @@ function printInterrupts()
 
       end
     end
+  end
     table.sort(currentGroupInterrupts, compare)
     --SendChatMessage("EDH:Suggested Interrupt Order",EntropiChatSaveTo ,"COMMON" ,1);
     for k, v in pairs(currentGroupInterrupts) do
@@ -285,7 +392,7 @@ function printInterrupts()
           timing = "First or {Diamond}"
           firstPerson:SetText(v.individualName)
           firstPerson:SetTextColor(255, 255, 255)
-          firstPerson:SetFont("Fonts\\FRIZQT__.TTF", 13, "MONOCHROME, OUTLINE")
+          firstPerson:SetFont("Fonts\\FRIZQT__.TTF", 12, "OUTLINE")
           s1:SetValue(cooldownMS/1000)
           s1:SetStatusBarColor(classColorRGB.r,classColorRGB.g,classColorRGB.b,.5)
           s1:SetMinMaxValues(0, currentGroupInterrupts[1].cooldown)
@@ -293,28 +400,28 @@ function printInterrupts()
           timing = "Second or {Moon}"
           secondPerson:SetText(v.individualName)
           secondPerson:SetTextColor(255, 255, 255)
-          secondPerson:SetFont("Fonts\\FRIZQT__.TTF", 13, "MONOCHROME, OUTLINE")
+          secondPerson:SetFont("Fonts\\FRIZQT__.TTF", 13, "OUTLINE")
           s2:SetStatusBarColor(classColorRGB.r,classColorRGB.g,classColorRGB.b,.5)
           s2:SetMinMaxValues(0, currentGroupInterrupts[2].cooldown)
         elseif(k==3) then
           timing = "Third or {Square}"
           thirdPerson:SetText(v.individualName)
           thirdPerson:SetTextColor(255, 255, 255)
-          thirdPerson:SetFont("Fonts\\FRIZQT__.TTF", 13, "MONOCHROME, OUTLINE")
+          thirdPerson:SetFont("Fonts\\FRIZQT__.TTF", 13, "OUTLINE")
           s3:SetStatusBarColor(classColorRGB.r,classColorRGB.g,classColorRGB.b,.5)
           s3:SetMinMaxValues(0, currentGroupInterrupts[3].cooldown)
         elseif(k==4) then
           timing = "Fourth or {Circle}"
           fourthPerson:SetText(v.individualName)
           fourthPerson:SetTextColor(255, 255, 255)
-          fourthPerson:SetFont("Fonts\\FRIZQT__.TTF", 13, "MONOCHROME, OUTLINE")
+          fourthPerson:SetFont("Fonts\\FRIZQT__.TTF", 13, "OUTLINE")
           s4:SetStatusBarColor(classColorRGB.r,classColorRGB.g,classColorRGB.b,.5)
           s4:SetMinMaxValues(0, currentGroupInterrupts[4].cooldown)
         else
           timing = "Fifth or {Star}"
           fifthPerson:SetText(v.individualName)
           fifthPerson:SetTextColor(255, 255, 255)
-          fifthPerson:SetFont("Fonts\\FRIZQT__.TTF", 13, "MONOCHROME, OUTLINE")
+          fifthPerson:SetFont("Fonts\\FRIZQT__.TTF", 13, "OUTLINE")
           s5:SetStatusBarColor(classColorRGB.r,classColorRGB.g,classColorRGB.b,.5)
           s5:SetMinMaxValues(0, currentGroupInterrupts[5].cooldown)
         end
@@ -345,6 +452,9 @@ SlashCmdList["EDH"] = function(msg)
     EDHInterfaceFrame:Show();
    end
    if msg == "" then
+    if(s1 == nil) then
+      initializeInterface();
+    end
     printInterrupts()
    end
    if msg == "clear" then
